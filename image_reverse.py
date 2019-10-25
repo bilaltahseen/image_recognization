@@ -25,15 +25,8 @@ def image_recg(image):
     searchUrl = response2.headers['Location']
     s = requests.get(searchUrl, headers=headers).text
     soup = BeautifulSoup(s, 'html5lib')
-    print('Possible Image Targets..')
+    print('Possible Image Target..')
     print(soup.find('a', class_='fKDtNb').text)
-    for targets in soup.find_all('h3'):
-        if (targets.text == 'Visually similar images'):
-
-            print('-End-')
-            break
-        else:
-            print(targets.text)
 
 
 while True:
@@ -43,10 +36,17 @@ while True:
     if key == ord('s'):
         temp_file_name = 'temp_image_search.jpeg'
         cv2.imwrite(filename=temp_file_name, img=frame)
+        W = 500
+        oriimg = cv2.imread(temp_file_name)
+        height, width, depth = oriimg.shape
+        imgScale = W / width
+        newX, newY = oriimg.shape[1] * imgScale, oriimg.shape[0] * imgScale
+        newimg = cv2.resize(oriimg, (int(newX), int(newY)))
+        cv2.imwrite(temp_file_name, newimg)
         webcam.release()
         cv2.destroyAllWindows()
         image_recg(temp_file_name)
-        os.remove("temp_image_search.jpeg")
+
         break
     elif key == ord('q'):
         webcam.release()
